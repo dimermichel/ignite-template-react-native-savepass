@@ -29,16 +29,29 @@ export function Home() {
   const [data, setData] = useState<LoginListDataProps>([]);
 
   async function loadData() {
-    const dataKey = '@savepass:logins';
     // Get asyncStorage data, use setSearchListData and setData
+    const dataKey = '@savepass:logins';
+    const data = await AsyncStorage.getItem(dataKey);
+    if (data) {
+      setData(JSON.parse(data));
+      setSearchListData(JSON.parse(data));
+    }
   }
 
   function handleFilterLoginData() {
     // Filter results inside data, save with setSearchListData
+    const filteredData = data.filter(
+      (item: LoginDataProps) =>
+        item.service_name.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.password.toLowerCase().includes(searchText.toLowerCase()),
+    );
+    setSearchListData(filteredData);
   }
 
   function handleChangeInputText(text: string) {
     // Update searchText value
+    setSearchText(text);
   }
 
   useFocusEffect(useCallback(() => {
